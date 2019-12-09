@@ -12,3 +12,8 @@ var operators = make(map[string]*Operator)
 func AddOperator(opr *Operator) {
 	operators[opr.Name] = opr
 }
+
+func GetOperator(name string) (*Operator, bool) {
+	opr, ok := operators[name]
+	return opr, ok
+}
