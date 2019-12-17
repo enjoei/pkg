@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/LeandroSNunes/querybuilder/operator"
+	"github.com/enjoei/pkg/querybuilder/operator"
 )
 
 type Rule struct {
