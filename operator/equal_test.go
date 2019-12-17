@@ -19,7 +19,7 @@ func TestEqual(t *testing.T) {
 	}
 
 	for _, input := range inputs {
-		got := Equal.Evaluator(input.value, input.input)
+		got := Equal.Evaluate(input.value, input.input)
 		if got != input.want {
 			t.Errorf("%v equal? %v got: %t, want: %t", input.value, input.input, got, input.want)
 		}

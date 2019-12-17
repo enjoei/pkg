@@ -22,7 +22,7 @@ func (r *Rule) Evaluate(dataset map[string]interface{}) bool {
 		return false
 	}
 
-	return opr.Evaluator(r.getInputValue(dataset), r.getValue())
+	return opr.Evaluate(r.getInputValue(dataset), r.getValue())
 }
 
 func (r *Rule) getValue() interface{} {
@@ -38,7 +38,7 @@ func (r *Rule) getInputValue(dataset map[string]interface{}) interface{} {
 	for i := 0; i < steps; i++ {
 		result, ok = dataset[field[i]]
 		if !ok {
-			break
+			return nil
 		}
 
 		rresult := reflect.ValueOf(result)
@@ -47,7 +47,7 @@ func (r *Rule) getInputValue(dataset map[string]interface{}) interface{} {
 		}
 
 		if result == nil {
-			break
+			return nil
 		}
 	}
 
@@ -64,7 +64,7 @@ func (r *Rule) castValue(v interface{}) interface{} {
 	case "string":
 		return v.(string)
 	case "integer":
-		return v.(int)
+		return int(v.(float64))
 	case "double":
 		return v.(float64)
 	case "date":

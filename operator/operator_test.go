@@ -7,7 +7,7 @@ func TestAddOperator(t *testing.T) {
 
 	AddOperator(&Operator{
 		Name: "myopr",
-		Evaluator: func(input, value interface{}) bool {
+		Evaluate: func(input, value interface{}) bool {
 			return true
 		},
 	})
@@ -22,7 +22,7 @@ func TestGetOperator(t *testing.T) {
 
 	newOpr := &Operator{
 		Name: "myopr",
-		Evaluator: func(input, value interface{}) bool {
+		Evaluate: func(input, value interface{}) bool {
 			return true
 		},
 	}

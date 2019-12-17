@@ -2,8 +2,8 @@
 package operator
 
 type Operator struct {
-	Name      string
-	Evaluator func(input, value interface{}) bool
+	Name     string
+	Evaluate func(input, value interface{}) bool
 }
 
 var operators = make(map[string]*Operator)

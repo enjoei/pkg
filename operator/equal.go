@@ -7,7 +7,7 @@ func init() {
 // Equal
 var Equal = &Operator{
 	Name: "equal",
-	Evaluator: func(input, value interface{}) bool {
+	Evaluate: func(input, value interface{}) bool {
 		return input == value
 	},
 }

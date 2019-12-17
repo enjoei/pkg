@@ -4,10 +4,14 @@ func init() {
 	AddOperator(Greater)
 }
 
-// Equal
+// Greater
 var Greater = &Operator{
 	Name: "greater",
-	Evaluator: func(input, value interface{}) bool {
+	Evaluate: func(input, value interface{}) bool {
+		if input == nil {
+			return false
+		}
+
 		switch value.(type) {
 		case float64:
 			return input.(float64) > value.(float64)
