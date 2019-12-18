@@ -1,7 +1,9 @@
 package querybuilder
 
 import (
+	"fmt"
 	"reflect"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -87,11 +89,11 @@ func (r *Rule) castValue(v interface{}) interface{} {
 
 	switch r.Type {
 	case "string":
-		return v.(string)
+		return to_string(v)
 	case "integer":
-		return int(v.(float64))
+		return to_integer(v)
 	case "double":
-		return v.(float64)
+		return to_double(v)
 	case "date":
 		return nil
 	case "time":
@@ -119,4 +121,46 @@ func (r *Rule) parseValue(v interface{}) interface{} {
 	}
 
 	return r.castValue(v)
+}
+
+func to_string(v interface{}) string {
+	switch v.(type) {
+	case string:
+		return v.(string)
+	case float64:
+		return fmt.Sprintf("%f", v.(float64))
+	case bool:
+		return fmt.Sprintf("%t", v.(bool))
+	default:
+		return ""
+	}
+}
+
+func to_double(v interface{}) float64 {
+	switch v.(type) {
+	case string:
+		f, _ := strconv.ParseFloat(v.(string), 64)
+		return f
+	case float64:
+		return v.(float64)
+	default:
+		return 0
+	}
+}
+
+func to_integer(v interface{}) int {
+	switch v.(type) {
+	case string:
+		i, _ := strconv.Atoi(v.(string))
+		return i
+	case float64:
+		return int(v.(float64))
+	case bool:
+		if v.(bool) {
+			return 1
+		}
+		return 0
+	default:
+		return 0
+	}
 }
