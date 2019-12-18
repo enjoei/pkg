@@ -18,6 +18,8 @@ func TestEqual(t *testing.T) {
 		{value: 1.55, input: 1.56, want: false},
 	}
 
+	// testar nil
+
 	for _, input := range inputs {
 		got := Equal.Evaluate(input.value, input.input)
 		if got != input.want {

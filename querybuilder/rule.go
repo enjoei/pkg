@@ -3,6 +3,7 @@ package querybuilder
 import (
 	"reflect"
 	"strings"
+	"sync"
 
 	"github.com/enjoei/pkg/querybuilder/operator"
 )
@@ -16,13 +17,29 @@ type Rule struct {
 	Value    interface{}
 }
 
+// Evaluate function checks whether the dataset matches with rule
 func (r *Rule) Evaluate(dataset map[string]interface{}) bool {
+	var wg sync.WaitGroup
+	var input, value interface{}
+
 	opr, ok := operator.GetOperator(r.Operator)
 	if !ok {
 		return false
 	}
 
-	return opr.Evaluate(r.getInputValue(dataset), r.getValue())
+	wg.Add(2)
+	go func() {
+		input = r.getInputValue(dataset)
+		wg.Done()
+	}()
+
+	go func() {
+		value = r.getValue()
+		wg.Done()
+	}()
+
+	wg.Wait()
+	return opr.Evaluate(input, value)
 }
 
 func (r *Rule) getValue() interface{} {
@@ -30,19 +47,27 @@ func (r *Rule) getValue() interface{} {
 }
 
 func (r *Rule) getInputValue(dataset map[string]interface{}) interface{} {
+	var rdataset = make(map[string]interface{})
 	var result interface{}
 	var ok bool
+
+	for k, v := range dataset {
+		rdataset[k] = v
+	}
+
 	field := strings.Split(r.Field, ".")
 	steps := len(field)
 
 	for i := 0; i < steps; i++ {
-		result, ok = dataset[field[i]]
+		result, ok = rdataset[field[i]]
 		if !ok {
 			return nil
 		}
 
 		rresult := reflect.ValueOf(result)
-		if rresult.Kind() == reflect.Slice && i != (steps-1) {
+		if rresult.Kind() == reflect.Map {
+			rdataset = result.(map[string]interface{})
+		} else if rresult.Kind() == reflect.Slice && i != (steps-1) {
 			result = rresult.Index(0)
 		}
 
