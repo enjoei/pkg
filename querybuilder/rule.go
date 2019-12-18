@@ -1,9 +1,7 @@
 package querybuilder
 
 import (
-	"fmt"
 	"reflect"
-	"strconv"
 	"strings"
 	"sync"
 
@@ -48,6 +46,7 @@ func (r *Rule) getValue() interface{} {
 	return r.parseValue(r.Value)
 }
 
+// getInputValue fetch in the dataset the field value and convert to the type of the rule
 func (r *Rule) getInputValue(dataset map[string]interface{}) interface{} {
 	var rdataset = make(map[string]interface{})
 	var result interface{}
@@ -81,6 +80,22 @@ func (r *Rule) getInputValue(dataset map[string]interface{}) interface{} {
 	return r.parseValue(result)
 }
 
+func (r *Rule) parseValue(v interface{}) interface{} {
+	rv := reflect.ValueOf(v)
+
+	if rv.Kind() == reflect.Slice {
+		sv := make([]interface{}, rv.Len())
+
+		for i := 0; i < rv.Len(); i++ {
+			sv = append(sv, r.castValue(rv.Index(i)))
+		}
+
+		return sv
+	}
+
+	return r.castValue(v)
+}
+
 // Available types in jQuery Query Builder are string, integer, double, date, time, datetime and boolean.
 func (r *Rule) castValue(v interface{}) interface{} {
 	if v == nil {
@@ -101,66 +116,8 @@ func (r *Rule) castValue(v interface{}) interface{} {
 	case "datetime":
 		return nil
 	case "boolean":
-		return v.(bool)
+		return to_boolean(v)
 	default:
 		return v
-	}
-}
-
-func (r *Rule) parseValue(v interface{}) interface{} {
-	rv := reflect.ValueOf(v)
-
-	if rv.Kind() == reflect.Slice {
-		sv := make([]interface{}, rv.Len())
-
-		for i := 0; i < rv.Len(); i++ {
-			sv = append(sv, r.castValue(rv.Index(i)))
-		}
-
-		return sv
-	}
-
-	return r.castValue(v)
-}
-
-func to_string(v interface{}) string {
-	switch v.(type) {
-	case string:
-		return v.(string)
-	case float64:
-		return fmt.Sprintf("%f", v.(float64))
-	case bool:
-		return fmt.Sprintf("%t", v.(bool))
-	default:
-		return ""
-	}
-}
-
-func to_double(v interface{}) float64 {
-	switch v.(type) {
-	case string:
-		f, _ := strconv.ParseFloat(v.(string), 64)
-		return f
-	case float64:
-		return v.(float64)
-	default:
-		return 0
-	}
-}
-
-func to_integer(v interface{}) int {
-	switch v.(type) {
-	case string:
-		i, _ := strconv.Atoi(v.(string))
-		return i
-	case float64:
-		return int(v.(float64))
-	case bool:
-		if v.(bool) {
-			return 1
-		}
-		return 0
-	default:
-		return 0
 	}
 }
