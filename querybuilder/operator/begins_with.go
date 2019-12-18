@@ -1,9 +1,9 @@
 package operator
 
-// import (
-// 	"reflect"
-// 	"strings"
-// )
+import (
+	"reflect"
+	"strings"
+)
 
 func init() {
 	AddOperator(BeginsWith)
@@ -12,6 +12,11 @@ func init() {
 var BeginsWith = &Operator{
 	Name: "begins_with",
 	Evaluate: func(input, value interface{}) bool {
-		return false
+		rv := reflect.ValueOf(value)
+		if rv.Kind() != reflect.String {
+			return false
+		}
+
+		return strings.HasPrefix(input.(string), value.(string))
 	},
 }
