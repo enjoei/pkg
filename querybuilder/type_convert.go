@@ -77,34 +77,34 @@ func toBoolean(v interface{}) bool {
 }
 
 // Date
-func toDate(v interface{}) *time.Time {
+func toDate(v interface{}) time.Time {
 	switch v.(type) {
 	case string:
 		t, _ := time.Parse(DATE_ISO_8601, v.(string))
-		return &t
+		return t
 	default:
-		return &time.Time{}
+		return time.Time{}
 	}
 }
 
 // Time
-func toTime(v interface{}) *time.Time {
+func toTime(v interface{}) time.Time {
 	switch v.(type) {
 	case string:
 		t, _ := time.Parse(TIME_ISO_8601, v.(string))
-		return &t
+		return t
 	default:
-		return &time.Time{}
+		return time.Time{}
 	}
 }
 
 // DateTime
-func toDateTime(v interface{}) *time.Time {
+func toDateTime(v interface{}) time.Time {
 	switch v.(type) {
 	case string:
 		t, _ := time.Parse(DATE_TIME_ISO_8601, v.(string))
-		return &t
+		return t
 	default:
-		return &time.Time{}
+		return time.Time{}
 	}
 }

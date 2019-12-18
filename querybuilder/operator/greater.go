@@ -1,5 +1,7 @@
 package operator
 
+import "time"
+
 func init() {
 	AddOperator(Greater)
 }
@@ -19,6 +21,10 @@ var Greater = &Operator{
 			return input.(int) > value.(int)
 		case string:
 			return len(input.(string)) > len(value.(string))
+		case time.Time:
+			i := input.(time.Time)
+			v := value.(time.Time)
+			return i.After(v)
 		default:
 			return false
 		}
