@@ -7,11 +7,13 @@ import (
 )
 
 const (
-	DATE_ISO_8601 = "2006-01-02"
+	DATE_ISO_8601      = "2006-01-02"
+	TIME_ISO_8601      = "15:04:05"
+	DATE_TIME_ISO_8601 = "2006-01-02T15:04:05"
 )
 
 // String
-func to_string(v interface{}) string {
+func toString(v interface{}) string {
 	switch v.(type) {
 	case string:
 		return v.(string)
@@ -25,7 +27,7 @@ func to_string(v interface{}) string {
 }
 
 // Double
-func to_double(v interface{}) float64 {
+func toDouble(v interface{}) float64 {
 	switch v.(type) {
 	case string:
 		f, _ := strconv.ParseFloat(v.(string), 64)
@@ -38,7 +40,7 @@ func to_double(v interface{}) float64 {
 }
 
 // Integer
-func to_integer(v interface{}) int {
+func toInteger(v interface{}) int {
 	switch v.(type) {
 	case string:
 		i, _ := strconv.Atoi(v.(string))
@@ -56,7 +58,7 @@ func to_integer(v interface{}) int {
 }
 
 // Boolean
-func to_boolean(v interface{}) bool {
+func toBoolean(v interface{}) bool {
 	switch v.(type) {
 	case string:
 		b, _ := strconv.ParseBool(v.(string))
@@ -75,10 +77,32 @@ func to_boolean(v interface{}) bool {
 }
 
 // Date
-func to_date(v interface{}) *time.Time {
+func toDate(v interface{}) *time.Time {
 	switch v.(type) {
 	case string:
 		t, _ := time.Parse(DATE_ISO_8601, v.(string))
+		return &t
+	default:
+		return &time.Time{}
+	}
+}
+
+// Time
+func toTime(v interface{}) *time.Time {
+	switch v.(type) {
+	case string:
+		t, _ := time.Parse(TIME_ISO_8601, v.(string))
+		return &t
+	default:
+		return &time.Time{}
+	}
+}
+
+// DateTime
+func toDateTime(v interface{}) *time.Time {
+	switch v.(type) {
+	case string:
+		t, _ := time.Parse(DATE_TIME_ISO_8601, v.(string))
 		return &t
 	default:
 		return &time.Time{}

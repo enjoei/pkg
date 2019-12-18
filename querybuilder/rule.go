@@ -104,19 +104,19 @@ func (r *Rule) castValue(v interface{}) interface{} {
 
 	switch r.Type {
 	case "string":
-		return to_string(v)
+		return toString(v)
 	case "integer":
-		return to_integer(v)
+		return toInteger(v)
 	case "double":
-		return to_double(v)
+		return toDouble(v)
 	case "date":
-		return nil
+		return toDate(v)
 	case "time":
-		return nil
+		return toTime(v)
 	case "datetime":
-		return nil
+		return toDateTime(v)
 	case "boolean":
-		return to_boolean(v)
+		return toBoolean(v)
 	default:
 		return v
 	}
