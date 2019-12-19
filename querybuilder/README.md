@@ -2,7 +2,9 @@
 This package is a Golang Rule Evaluator for [jQuery QueryBuilder](https://querybuilder.js.org/index.html)
 
 You will use the Evaluator to check if a dataset matches the JSON rules produced by the jQuery QueryBuilder plugin.
+
 Dataset is a map of the type `map[string]interface{}`
+
 You can access nested fields with a dot notation. e.g. fields.Question to access {'fields' => {'Question' => 'Answer'}}
 
 ## Example usage
@@ -38,6 +40,7 @@ func main(){
 
 ## Operators
 All the default operators have been implemented, see in `/operators` folder
+
 You can easily add custom operators, see:
 
 ```golang
