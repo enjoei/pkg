@@ -50,7 +50,6 @@ func init() {
 	AddOperator(EqualsFive)
 }
 
-// Equal
 var EqualsFive = &Operator{
 	Name: "equals_five",
 	Evaluate: func(input, value interface{}) bool {
@@ -58,7 +57,7 @@ var EqualsFive = &Operator{
 	},
 }
 ```
-The Evaluate function shoult receive a input and value params, even if a value is not required
+The Evaluate function should receive a input and value params, even if a value is not required
 
 ## Contributing
 - Fork it
