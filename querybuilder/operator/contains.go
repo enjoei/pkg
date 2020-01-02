@@ -9,6 +9,7 @@ func init() {
 	AddOperator(Contains)
 }
 
+// Contains operator check if input params contains the value params
 var Contains = &Operator{
 	Name: "contains",
 	Evaluate: func(input, value interface{}) bool {

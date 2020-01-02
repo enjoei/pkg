@@ -9,6 +9,7 @@ func init() {
 	AddOperator(EndsWith)
 }
 
+// EndsWith operator check if string ends with value of value param
 var EndsWith = &Operator{
 	Name: "ends_with",
 	Evaluate: func(input, value interface{}) bool {

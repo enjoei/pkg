@@ -9,7 +9,7 @@ func init() {
 	AddOperator(Between)
 }
 
-// Between
+// Between operator check if the input is between the values of value param
 var Between = &Operator{
 	Name: "between",
 	Evaluate: func(input, value interface{}) bool {

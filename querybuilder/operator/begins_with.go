@@ -9,6 +9,7 @@ func init() {
 	AddOperator(BeginsWith)
 }
 
+// BeginsWith operator check if string begins with value of value param
 var BeginsWith = &Operator{
 	Name: "begins_with",
 	Evaluate: func(input, value interface{}) bool {

@@ -6,7 +6,7 @@ func init() {
 	AddOperator(GreaterOrEqual)
 }
 
-// Greater
+// Greater Or Equal operator check if input is greater or equal than value param
 var GreaterOrEqual = &Operator{
 	Name: "greater_or_equal",
 	Evaluate: func(input, value interface{}) bool {

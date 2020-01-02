@@ -4,7 +4,7 @@ func init() {
 	AddOperator(Equal)
 }
 
-// Equal
+// Equal operator check if two values is equal
 var Equal = &Operator{
 	Name: "equal",
 	Evaluate: func(input, value interface{}) bool {
