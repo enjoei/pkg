@@ -86,10 +86,9 @@ func (r *Rule) parseValue(v interface{}) interface{} {
 	if rv.Kind() == reflect.Slice {
 		sv := make([]interface{}, rv.Len())
 
-		for i := 0; i < rv.Len(); i++ {
-			sv = append(sv, r.castValue(rv.Index(i)))
+		for i, vv := range v.([]interface{}) {
+			sv[i] = r.castValue(vv)
 		}
-
 		return sv
 	}
 

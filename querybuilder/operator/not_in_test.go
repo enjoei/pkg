@@ -9,11 +9,11 @@ func TestNotIn(t *testing.T) {
 		input interface{}
 		want  bool
 	}{
-		{title: "in-1", value: 2, input: []int{1, 2, 3}, want: false},
-		{title: "in-2", value: 2.5, input: []float64{2.0, 2.3, 2.5, 3}, want: false},
-		{title: "in-3", value: "c", input: []string{"a", "b", "c"}, want: false},
-		{title: "in-4", value: "d", input: []string{"a", "b", "c"}, want: true},
-		{title: "in-5", value: "word to", input: "my word to match", want: true},
+		{title: "in-1", value: []int{1, 2, 3}, input: 2, want: false},
+		{title: "in-2", value: []float64{2.0, 2.3, 2.5, 3}, input: 2.5, want: false},
+		{title: "in-3", value: []string{"a", "b", "c"}, input: "c", want: false},
+		{title: "in-4", value: []string{"a", "b", "c"}, input: "d", want: true},
+		{title: "in-5", value: "my word to match", input: "word to", want: true},
 	}
 
 	for _, input := range inputs {

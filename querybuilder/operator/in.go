@@ -10,11 +10,11 @@ func init() {
 var In = &Operator{
 	Name: "in",
 	Evaluate: func(input, value interface{}) bool {
-		rinput := reflect.ValueOf(input)
+		rvalue := reflect.ValueOf(value)
 
-		if rinput.Kind() == reflect.Slice {
-			for i := 0; i < rinput.Len(); i++ {
-				if rinput.Index(i).Interface() == value {
+		if rvalue.Kind() == reflect.Slice {
+			for i := 0; i < rvalue.Len(); i++ {
+				if rvalue.Index(i).Interface() == input {
 					return true
 				}
 			}
