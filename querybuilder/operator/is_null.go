@@ -1,11 +1,11 @@
 package operator
 
 func init() {
-	AddOperator(IsNil)
+	AddOperator(IsNull)
 }
 
-var IsNil = &Operator{
-	Name: "is_nil",
+var IsNull = &Operator{
+	Name: "is_null",
 	Evaluate: func(input, value interface{}) bool {
 		if input == nil {
 			return true

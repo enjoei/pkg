@@ -33,7 +33,7 @@ var ruleInputs = []struct {
 	{&Rule{ID: "date01", Field: "date", Type: "date", Input: "text", Operator: "between", Value: []interface{}{"2019-12-31", "2020-01-02"}}, true},
 	{&Rule{ID: "date02", Field: "date", Type: "date", Input: "text", Operator: "greater", Value: "2019-12-31"}, true},
 	{&Rule{ID: "date03", Field: "date", Type: "date", Input: "text", Operator: "greater_or_equal", Value: "2019-12-31"}, true},
-	{&Rule{ID: "field_nil", Field: "field_nil", Type: "double", Input: "text", Operator: "is_nil", Value: 1}, true},
+	{&Rule{ID: "field_nil", Field: "field_nil", Type: "double", Input: "text", Operator: "is_null", Value: 1}, true},
 }
 
 var typeNil interface{}
