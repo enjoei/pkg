@@ -14,6 +14,7 @@ type Rule struct {
 	Type     string
 	Input    string
 	Operator string
+	Sanitize bool
 	Value    interface{}
 }
 
@@ -77,7 +78,13 @@ func (r *Rule) getInputValue(dataset map[string]interface{}) interface{} {
 		}
 	}
 
-	return r.parseValue(result)
+	iv := r.parseValue(result)
+	if r.Sanitize && r.Type == "string" {
+		v := iv.(string)
+		return sanitize(&v)
+	}
+
+	return iv
 }
 
 func (r *Rule) parseValue(v interface{}) interface{} {

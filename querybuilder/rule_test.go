@@ -19,6 +19,7 @@ var ruleInputs = []struct {
 	{&Rule{ID: "string07", Field: "string", Type: "string", Input: "text", Operator: "greater_or_equal", Value: "my text for tests"}, true},
 	{&Rule{ID: "string08", Field: "string_empty", Type: "string", Input: "text", Operator: "is_empty", Value: "a"}, true},
 	{&Rule{ID: "string09", Field: "string", Type: "string", Input: "text", Operator: "match_with", Value: `/text\sfor/`}, true},
+	{&Rule{ID: "string10", Field: "string", Type: "string", Input: "text", Operator: "match_with", Sanitize: true, Value: `/textfor/`}, true},
 	{&Rule{ID: "double01", Field: "double", Type: "double", Input: "text", Operator: "between", Value: []interface{}{1.0, 2.0}}, true},
 	{&Rule{ID: "double02", Field: "double", Type: "double", Input: "text", Operator: "equal", Value: 1.2}, true},
 	{&Rule{ID: "double03", Field: "double", Type: "double", Input: "text", Operator: "greater", Value: 1.3}, false},
