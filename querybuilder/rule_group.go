@@ -48,7 +48,7 @@ func (rg *RuleGroup) getChecker(rule map[string]interface{}) Checker {
 		return &RuleGroup{Condition: rule["condition"], Rules: rule["rules"]}
 	}
 
-	return &Rule{
+	r := &Rule{
 		ID:       rule["id"].(string),
 		Field:    rule["field"].(string),
 		Type:     rule["type"].(string),
@@ -56,6 +56,12 @@ func (rg *RuleGroup) getChecker(rule map[string]interface{}) Checker {
 		Operator: rule["operator"].(string),
 		Value:    rule["value"],
 	}
+
+	if _, ok := rule["sanitize"]; ok {
+		r.Sanitize = rule["sanitize"].(bool)
+	}
+
+	return r
 }
 
 func (rg *RuleGroup) evaluateRules(res chan<- bool, rules []interface{}, dataset map[string]interface{}) {
