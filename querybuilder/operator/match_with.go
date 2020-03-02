@@ -18,6 +18,10 @@ var MatchWith = &Operator{
 			return false
 		}
 
+		if input == nil {
+			return false
+		}
+
 		v := value.(string)
 		in := input.(string)
 
