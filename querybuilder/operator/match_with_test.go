@@ -11,6 +11,7 @@ func TestMatchWith(t *testing.T) {
 	}{
 		{title: "match-1", value: `/word\sto/`, input: "my word to match", want: true},
 		{title: "match-2", value: `/word\sto/`, input: "My Word To Match", want: true},
+		{title: "match-3", value: `/word\sto/`, input: nil, want: false},
 		{title: "match-4", value: "word to", input: "my word to match", want: false},
 	}
 
