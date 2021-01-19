@@ -52,6 +52,8 @@ func toInteger(v interface{}) int {
 			return 1
 		}
 		return 0
+	case int:
+		return v.(int)	
 	default:
 		return 0
 	}
