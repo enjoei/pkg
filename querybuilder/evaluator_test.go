@@ -35,3 +35,14 @@ func TestMatch(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkMatch(b *testing.B) {
+	qb := New(parseJson(rulesetStr))
+	for i := 0; i < b.N; i++ {
+		qb.Match(map[string]interface{}{
+			"float_equal": 1.3,
+			"foo":         "bar",
+			"baz":         123,
+		})
+	}
+}

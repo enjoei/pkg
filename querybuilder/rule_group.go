@@ -16,24 +16,20 @@ type RuleGroup struct {
 
 func (rg *RuleGroup) Evaluate(dataset map[string]interface{}) bool {
 	rules := rg.Rules.([]interface{})
-	rulesSize := len(rules)
-	res := make(chan bool)
-
+	var res bool
 	switch rg.Condition.(string) {
 	case AND:
-		rg.evaluateRules(res, rules, dataset)
-
-		for i := 0; i < rulesSize; i++ {
-			if !<-res {
+		for _, r := range rules {
+			res = rg.getChecker(r.(map[string]interface{})).Evaluate(dataset)
+			if !res {
 				return false
 			}
 		}
 		return true
 	case OR:
-		rg.evaluateRules(res, rules, dataset)
-
-		for i := 0; i < rulesSize; i++ {
-			if <-res {
+		for _, r := range rules {
+			res = rg.getChecker(r.(map[string]interface{})).Evaluate(dataset)
+			if res {
 				return true
 			}
 		}
@@ -62,13 +58,4 @@ func (rg *RuleGroup) getChecker(rule map[string]interface{}) Checker {
 	}
 
 	return r
-}
-
-func (rg *RuleGroup) evaluateRules(res chan<- bool, rules []interface{}, dataset map[string]interface{}) {
-	for _, v := range rules {
-		go func(r map[string]interface{}) {
-			checker := rg.getChecker(r)
-			res <- checker.Evaluate(dataset)
-		}(v.(map[string]interface{}))
-	}
 }
