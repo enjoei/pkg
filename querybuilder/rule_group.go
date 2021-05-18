@@ -1,12 +1,14 @@
 package querybuilder
 
+import "github.com/pkg/errors"
+
 const (
 	AND = "AND"
 	OR  = "OR"
 )
 
 type Checker interface {
-	Evaluate(dataset map[string]interface{}) bool
+	Evaluate(dataset map[string]interface{}) (bool, error)
 }
 
 type RuleGroup struct {
@@ -14,28 +16,37 @@ type RuleGroup struct {
 	Rules     interface{}
 }
 
-func (rg *RuleGroup) Evaluate(dataset map[string]interface{}) bool {
+func (rg *RuleGroup) Evaluate(dataset map[string]interface{}) (bool, error) {
 	rules := rg.Rules.([]interface{})
-	var res bool
+	var ok bool
+
 	switch rg.Condition.(string) {
 	case AND:
 		for _, r := range rules {
-			res = rg.getChecker(r.(map[string]interface{})).Evaluate(dataset)
-			if !res {
-				return false
+			var err error
+			ok, err = rg.getChecker(r.(map[string]interface{})).Evaluate(dataset)
+			if err != nil {
+				return false, err
+			} else if !ok {
+				return false, nil
 			}
 		}
-		return true
+		return true, nil
+
 	case OR:
 		for _, r := range rules {
-			res = rg.getChecker(r.(map[string]interface{})).Evaluate(dataset)
-			if res {
-				return true
+			var err error
+			ok, err = rg.getChecker(r.(map[string]interface{})).Evaluate(dataset)
+			if err != nil {
+				return false, err
+			} else if ok {
+				return true, nil
 			}
 		}
-		return false
+		return false, nil
+
 	default:
-		return false
+		return false, errors.Errorf("invalid Condition %s", rg.Condition)
 	}
 }
 

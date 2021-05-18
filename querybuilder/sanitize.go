@@ -1,35 +1,39 @@
 package querybuilder
 
 import (
+	"regexp"
+	"unicode"
+
 	"golang.org/x/text/runes"
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
-	"regexp"
-	"unicode"
 )
 
 const NoSymbolsPattern = "[^a-zA-Z0-9]+"
 
-func sanitize(s *string) string {
-	output := removeAccents(s)
-	return *removeSymbols(output)
+func sanitize(s *string) (string, error) {
+	output, err := removeAccents(s)
+	if err != nil {
+		return *output, err
+	}
+	return removeSymbols(output)
 }
 
-func removeAccents(s *string) *string {
+func removeAccents(s *string) (*string, error) {
 	t := transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
 	output, _, err := transform.String(t, *s)
 	if err != nil {
-		return s
+		return s, err
 	}
-	return &output
+	return &output, nil
 }
 
-func removeSymbols(s *string) *string {
+func removeSymbols(s *string) (string, error) {
 	reg, err := regexp.Compile(NoSymbolsPattern)
 	if err != nil {
-		return s
+		return *s, err
 	}
 	processedString := reg.ReplaceAllString(*s, "")
 
-	return &processedString
+	return processedString, nil
 }

@@ -1,6 +1,10 @@
 package querybuilder
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/pkg/errors"
+)
 
 var rulesetStr = `{
   "condition": "AND",
@@ -18,19 +22,25 @@ func TestMatch(t *testing.T) {
 		title   string
 		dataset string
 		want    bool
+		err     error
 	}{
-		{"dt-01", `{"float_equal":  1.0, "int_equal": 5, "int_greater":  3, "float_greater": 7.7}`, false},
-		{"dt-02", `{"float_equal":  1.2, "int_equal": 5, "int_greater":  3, "float_greater": 7.7}`, true},
-		{"dt-03", `{"float_equal":  1.2}`, false},
-		{"dt-04", `{"int_greater":  3}`, false},
+		{"dt-01", `{"float_equal":  1.0, "int_equal": 5, "int_greater":  3, "float_greater": 7.7}`, false, nil},
+		{"dt-02", `{"float_equal":  1.2, "int_equal": 5, "int_greater":  3, "float_greater": 7.7}`, true, nil},
+		{"dt-03", `{"float_equal":  1.2}`, false, errors.Errorf(`error in field: float_greater`)},
+		{"dt-04", `{"int_greater":  3}`, false, errors.Errorf(`error in field: float_equal`)},
+		{"dt-05", `{"float_equal":  1.5, "int_equal": 5, "int_greater":  3, "float_greater": 2.2}`, false, nil},
+		{"dt-06", `{"float_equal":  1.2, "int_equal": 0, "int_greater":  10, "float_greater": 7.7}`, true, nil},
+		{"dt-07", `{"float_equal":  1.2, "int_equal": 0, "int_greater":  "1a", "float_greater": 7.7}`, false, errors.Errorf(`strconv.Atoi: parsing "1a": invalid syntax`)},
 	}
 
 	qb := New(parseJson(rulesetStr))
 
 	for _, input := range inputs {
 		t.Run(input.title, func(t *testing.T) {
-			if got := qb.Match(parseJson(input.dataset)); got != input.want {
-				t.Errorf("Match got %t, want %t", got, input.want)
+			if got, err := qb.Match(parseJson(input.dataset)); err != nil && input.err.Error() != err.Error() {
+				t.Errorf("Unexpected error %s, got %s", err, input.err)
+			} else if got != input.want {
+				t.Errorf("Expected %t, got %t", input.want, got)
 			}
 		})
 	}
