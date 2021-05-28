@@ -58,7 +58,7 @@ func (r *Rule) getInputValue(dataset map[string]interface{}) (interface{}, error
 	for i := 0; i < steps; i++ {
 		result, ok = rdataset[field[i]]
 		if !ok {
-			return nil, errors.Errorf("error in field: %s", field[i])
+			return nil, nil
 		}
 
 		rresult := reflect.ValueOf(result)

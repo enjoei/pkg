@@ -45,6 +45,8 @@ var ruleInputs = []struct {
 	{&Rule{ID: "string12", Field: "string", Type: "string", Input: "text", Operator: "match_with", Value: `/text\sfr/`}, false, nil},
 	{&Rule{ID: "integer10", Field: "integer", Type: "integer", Input: "text", Operator: "in", Value: []interface{}{11.0, 12.0, 13.0}}, false, nil},
 	{&Rule{ID: "integer11", Field: "integer", Type: "integer", Input: "text", Operator: "in", Value: []interface{}{}}, false, nil},
+	{&Rule{ID: "string20", Field: "string", Type: "string", Input: "text", Operator: "match_with", Value: nil}, false, nil},
+	{&Rule{ID: "string21", Field: "string", Type: "string", Input: "text", Operator: "greater", Value: nil}, false, nil},
 }
 
 var typeNil interface{}
@@ -64,8 +66,9 @@ var ruleDataset = map[string]interface{}{
 func TestRuleEvaluate(t *testing.T) {
 	for _, i := range ruleInputs {
 		t.Run(i.rule.ID, func(t *testing.T) {
-			if ok, err := i.rule.Evaluate(ruleDataset); err != nil && i.err.Error() != err.Error() {
-				t.Errorf("Unexpected error %s, expected %s", err.Error(), i.err.Error())
+			ok, err := i.rule.Evaluate(ruleDataset)
+			if i.err != nil && err == nil {
+				t.Errorf("Unexpected error %s, expected %s", err, i.err)
 			} else if i.want != ok {
 				t.Errorf("Expected %t, got %t", i.want, ok)
 			}

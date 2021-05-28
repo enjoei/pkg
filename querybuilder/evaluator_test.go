@@ -26,8 +26,8 @@ func TestMatch(t *testing.T) {
 	}{
 		{"dt-01", `{"float_equal":  1.0, "int_equal": 5, "int_greater":  3, "float_greater": 7.7}`, false, nil},
 		{"dt-02", `{"float_equal":  1.2, "int_equal": 5, "int_greater":  3, "float_greater": 7.7}`, true, nil},
-		{"dt-03", `{"float_equal":  1.2}`, false, errors.Errorf(`error in field: float_greater`)},
-		{"dt-04", `{"int_greater":  3}`, false, errors.Errorf(`error in field: float_equal`)},
+		{"dt-03", `{"float_equal":  1.2}`, false, nil},
+		{"dt-04", `{"int_greater":  3}`, false, nil},
 		{"dt-05", `{"float_equal":  1.5, "int_equal": 5, "int_greater":  3, "float_greater": 2.2}`, false, nil},
 		{"dt-06", `{"float_equal":  1.2, "int_equal": 0, "int_greater":  10, "float_greater": 7.7}`, true, nil},
 		{"dt-07", `{"float_equal":  1.2, "int_equal": 0, "int_greater":  "1a", "float_greater": 7.7}`, false, errors.Errorf(`strconv.Atoi: parsing "1a": invalid syntax`)},
@@ -37,7 +37,8 @@ func TestMatch(t *testing.T) {
 
 	for _, input := range inputs {
 		t.Run(input.title, func(t *testing.T) {
-			if got, err := qb.Match(parseJson(input.dataset)); err != nil && input.err.Error() != err.Error() {
+			got, err := qb.Match(parseJson(input.dataset))
+			if input.err != nil && err == nil {
 				t.Errorf("Unexpected error %s, got %s", err, input.err)
 			} else if got != input.want {
 				t.Errorf("Expected %t, got %t", input.want, got)

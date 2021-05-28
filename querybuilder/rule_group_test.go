@@ -93,6 +93,7 @@ func TestRuleGroupEvaluate(t *testing.T) {
 		{"(7) AND & OR", ruleset[3], `{"float_greater_or_equal":  "20a", "datetime_greater": "2020-02-01T21:21:24", "time_lesser": "02:04:59" ,"int_equal": 10}`, false, errors.Errorf(`strconv.ParseFloat: parsing "20a": invalid syntax`)},
 		{"(8) OR & AND", ruleset[4], `{"int_lesser":  "2a", "string_contains": "test_cricket", "time_lesser": "02:04:59" ,"int_equal": 10}`, false, errors.Errorf(`strconv.Atoi: parsing "2a": invalid syntax`)},
 		{"(9) only AND", ruleset[5], `{"float_greater_or_equal": "100.0", "int_equal_1": "1Recharge", "int_equal_2": "0"}`, false, errors.Errorf(`strconv.Atoi: parsing "1Recharge": invalid syntax`)},
+		{"(10) only AND", ruleset[5], `{"int_equal_1": "Recharge", "int_equal_2": "0"}`, false, nil},
 	}
 
 	for _, input := range inputs {
@@ -104,10 +105,11 @@ func TestRuleGroupEvaluate(t *testing.T) {
 
 			rg := RuleGroup{Condition: rules["condition"], Rules: rules["rules"]}
 
-			if got, err := rg.Evaluate(parseJson(input.dataset)); err != nil && input.err.Error() != err.Error() { // nil==nil is false, so we make sure both aren't nil by checking one
-				t.Errorf("Unexpected error %s wanted %s", err, input.err)
+			got, err := rg.Evaluate(parseJson(input.dataset))
+			if input.err != nil && err == nil {
+				t.Errorf("Unexpected error %s, got %s", err, input.err)
 			} else if got != input.want {
-				t.Errorf("Got %t, expected %t", got, input.want)
+				t.Errorf("Expected %t, got %t", input.want, got)
 			}
 		})
 	}
