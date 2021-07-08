@@ -4,7 +4,7 @@ type Evaluator struct {
 	Ruleset map[string]interface{}
 }
 
-func (e *Evaluator) Match(dataset map[string]interface{}) bool {
+func (e *Evaluator) Match(dataset map[string]interface{}) (bool, error) {
 	rg := RuleGroup{Condition: e.Ruleset["condition"], Rules: e.Ruleset["rules"]}
 	return rg.Evaluate(dataset)
 }

@@ -3,9 +3,9 @@ package querybuilder
 import (
 	"reflect"
 	"strings"
-	"sync"
 
 	"github.com/enjoei/pkg/querybuilder/operator"
+	"github.com/pkg/errors"
 )
 
 type Rule struct {
@@ -19,36 +19,31 @@ type Rule struct {
 }
 
 // Evaluate function checks whether the dataset matches with rule
-func (r *Rule) Evaluate(dataset map[string]interface{}) bool {
-	var wg sync.WaitGroup
-	var input, value interface{}
-
+func (r *Rule) Evaluate(dataset map[string]interface{}) (bool, error) {
 	opr, ok := operator.GetOperator(r.Operator)
 	if !ok {
-		return false
+		return false, errors.Errorf("invalid Operator %s", r.Operator)
 	}
 
-	wg.Add(2)
-	go func() {
-		input = r.getInputValue(dataset)
-		wg.Done()
-	}()
+	value, err := r.getValue()
+	if err != nil {
+		return false, err
+	}
 
-	go func() {
-		value = r.getValue()
-		wg.Done()
-	}()
+	input, err := r.getInputValue(dataset)
+	if err != nil {
+		return false, err
+	}
 
-	wg.Wait()
-	return opr.Evaluate(input, value)
+	return opr.Evaluate(input, value), nil
 }
 
-func (r *Rule) getValue() interface{} {
+func (r *Rule) getValue() (interface{}, error) {
 	return r.parseValue(r.Value)
 }
 
 // getInputValue fetch in the dataset the field value and convert to the type of the rule
-func (r *Rule) getInputValue(dataset map[string]interface{}) interface{} {
+func (r *Rule) getInputValue(dataset map[string]interface{}) (interface{}, error) {
 	var rdataset = make(map[string]interface{})
 	var result interface{}
 	var ok bool
@@ -63,7 +58,7 @@ func (r *Rule) getInputValue(dataset map[string]interface{}) interface{} {
 	for i := 0; i < steps; i++ {
 		result, ok = rdataset[field[i]]
 		if !ok {
-			return nil
+			return nil, nil
 		}
 
 		rresult := reflect.ValueOf(result)
@@ -72,40 +67,48 @@ func (r *Rule) getInputValue(dataset map[string]interface{}) interface{} {
 		} else if rresult.Kind() == reflect.Slice && i != (steps-1) {
 			result = rresult.Index(0)
 		}
-
-		if result == nil {
-			return nil
-		}
 	}
 
-	iv := r.parseValue(result)
+	iv, err := r.parseValue(result)
+	if err != nil {
+		return iv, err
+	}
+
 	if r.Sanitize && r.Type == "string" {
 		v := iv.(string)
 		return sanitize(&v)
 	}
 
-	return iv
+	return iv, nil
 }
 
-func (r *Rule) parseValue(v interface{}) interface{} {
+func (r *Rule) parseValue(v interface{}) (interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+
 	rv := reflect.ValueOf(v)
 
 	if rv.Kind() == reflect.Slice {
 		sv := make([]interface{}, rv.Len())
 
 		for i, vv := range v.([]interface{}) {
-			sv[i] = r.castValue(vv)
+			var err error
+			sv[i], err = r.castValue(vv)
+			if err != nil {
+				return nil, err
+			}
 		}
-		return sv
+		return sv, nil
 	}
 
 	return r.castValue(v)
 }
 
 // Available types in jQuery Query Builder are string, integer, double, date, time, datetime and boolean.
-func (r *Rule) castValue(v interface{}) interface{} {
+func (r *Rule) castValue(v interface{}) (interface{}, error) {
 	if v == nil {
-		return nil
+		return nil, nil
 	}
 
 	switch r.Type {
@@ -124,6 +127,6 @@ func (r *Rule) castValue(v interface{}) interface{} {
 	case "boolean":
 		return toBoolean(v)
 	default:
-		return v
+		return v, errors.Errorf("invalid datatype: %s", r.Type)
 	}
 }
